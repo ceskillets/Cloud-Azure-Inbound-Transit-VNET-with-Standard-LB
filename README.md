@@ -1,4 +1,4 @@
-
+3 Cloud Azure Inbound Transit VNET with Standard Load Balancer
 ## Brief Description
 This skillet deploys VM-Series to provide inbound security for multiple VNet’s within a single subscription in a given region. It follows the transit VNet architecture with VNet peering to connect multiple Subscriber VNet’s to Hub VNet and communicate with each other via the security policies configured on VM-Series NGFW.
 
