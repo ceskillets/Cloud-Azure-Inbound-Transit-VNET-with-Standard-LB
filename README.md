@@ -8,14 +8,23 @@ A list of the target audience for the skillet.
 -	Public Cloud SE’s
 
 ## Skillet Details
+
 Authoring Group:  Public Cloud
+
 Documentation:  
+
 Github Location:  https://github.com/ceskillets/Cloud-Azure-Inbound-Transit-VNET-with-Standard-LB.git 
+
 PAN-OS Supported:  8.1, 9.0
+
 Cloud Provider(s) Supported:  AZURE
+
 Type of Skillet:  Public Cloud
+
 Purpose:  Demo
+
 Status:  Completed
+
 
 ## Detail Description
 There are many different ways to deploy VM-Series NGFW to protect critical workloads in Google Cloud Platform. Each design models has their own merits. In this skillet we intend to deploy VM-Series on Microsoft Azure, specifically on the Transit VNet design model. This architecture allows you to centralize security for multiple spoke VNet and connect it to hub VNet to consolidate all kinds of external connectivity. 
