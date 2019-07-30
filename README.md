@@ -1,34 +1,40 @@
+
 ## Brief Description
-This skillet deploys 2 VM-Series NGFW with an internal load balancer in single arm mode for East-West communication between applications without the need for configuring SNAT. The skillet also deploys two ubuntu servers to test the east west traffic.
-Target Audience
+This skillet deploys VM-Series to provide inbound security for multiple VNet’s within a single subscription in a given region. It follows the transit VNet architecture with VNet peering to connect multiple Subscriber VNet’s to Hub VNet and communicate with each other via the security policies configured on VM-Series NGFW.
+
+## Target Audience
 A list of the target audience for the skillet.  
 -	Core SE’s
 -	Public Cloud SE’s
+
 ## Skillet Details
 Authoring Group:  Public Cloud
 Documentation:  
 Github Location:  https://github.com/ceskillets/Cloud-Azure-Inbound-Transit-VNET-with-Standard-LB.git 
-PAN-OS Supported: 8.1, 9.0 
+PAN-OS Supported:  8.1, 9.0
 Cloud Provider(s) Supported:  AZURE
 Type of Skillet:  Public Cloud
 Purpose:  Demo
 Status:  Completed
+
 ## Detail Description
-There are customer requirements where they want to retain the original source IP of the application servers when they communicate across multiple applications. Some of the primary reasons for this requirement could be because of hardcoded IP address, whitelisting requirement or logging the transaction source IP. In the regular VM-series deployment, SNAT is configured to ensure symmetric traffic routing to the NGFW where the session is maintained.
+There are many different ways to deploy VM-Series NGFW to protect critical workloads in Google Cloud Platform. Each design models has their own merits. In this skillet we intend to deploy VM-Series on Microsoft Azure, specifically on the Transit VNet design model. This architecture allows you to centralize security for multiple spoke VNet and connect it to hub VNet to consolidate all kinds of external connectivity. 
 
-To achieve this requirement, VM-series is deployed in single arm as shown in the figure below. Load Balancer deployed in trust subnet to distribute traffic to both firewall maintains the session information of the traffic flow. This allows the load balance to ensure the response to the request from the destination server is always sent to the same NGFW that processed the request.
+Executing this skillet, will allow you to successfully deploy VM-series NGFW in the Azure environment. This deployment uses external Load balancer to receive inbound user request from internet and forward it to respective applications in the spoke VNet.
 
- 
-
-### Traffic Flow
-The below diagram depicts the traffics flow from server in APP1 subnet to server in APP2 subnet. The original source and destination IP of the requesting host and server is retained in the IP header. 
+This design models primarily defines how traffic flows are distributed amongst VM-Series firewalls while offering you flexibility in the number of firewalls, scale, and operational resiliency. To ensure symmetric traffic flow for the response from the server, SNAT is configured on the NGFW’s Trust interface IP.
 
  
 
-This design ensures the east-west traffic flow within the VNET between multiple subnets are symmetric and always passes the same NGFW for a single transaction.
+### Inbound Traffic
+For inbound traffic, the external load-balancer distributes traffic to the firewalls. The public load-balancer’s health probes monitor firewall availability through the HTTPS service activated in the interface management profile. Connectivity to the HTTPS service is limited to traffic sourced from the health probe IP address.
 
-With this demo you can demonstrate the value of deploying VM-Series NGFW in Azure cloud while retaining the original source IP address.
+ 
+
+### High Availability
+Based on the health probe timers, external load balancer will detect the failure and divert the traffic to the remaining healthy VM-Series firewalls. 
+
+Horizontal Scaling: This design allows you to easily scale the number of NGFW’s horizontally to increase the performance by adding one VM at a time into the availability set.
 
 ### Outcome
-In the single VNet single arm VM-Series deployment, a common set of firewalls provides visibility and control of all traffic profiles (East-West). The firewalls are deployed in a single VNet that are deployed in HA using Internal load balancer to avoid downtime caused by maintenance activities or failure.
-
+In the transit VNet design, a common set of firewalls provides visibility and control of all traffic profiles (inbound, and outbound). V-Series are deployed in the HUB VNet in HA using external load balancer to avoid downtime caused by maintenance activities or failure.
